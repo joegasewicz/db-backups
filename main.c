@@ -8,16 +8,16 @@ int main(void)
 {
     char confirm[4];
     /* Postgres details */
-    char *db_name = malloc(100);
-    char *host = malloc(253);
-    char *port = malloc(6);
-    char *username = malloc(300);
-    char *password = malloc(300);
+    char *db_name = malloc(sizeof(char) * 100);
+    char *host = malloc(sizeof(char) * 253);
+    char *port = malloc(sizeof(char) * 6);
+    char *username = malloc(sizeof(char) * 300);
+    char *password = malloc(sizeof(char) * 300);
     /* File details */
-    char *destination = malloc(1000);
-    char *filename = malloc(300);
-    char *fullpath = malloc(1000);
-    char *cmd = malloc(2000);
+    char *destination = malloc(sizeof(char) * 1000);
+    char *filename = malloc(sizeof(char) * 300);
+    char *fullpath = malloc(sizeof(char) * 1000);
+    char *cmd = malloc(sizeof(char) * 2000);
 
     int failed_run = 0;
 
@@ -56,13 +56,6 @@ int main(void)
         failed_run = EXIT_FAILED_RUN;
         goto clean;
     }
-    if (strcmp(confirm, "y") != 0)
-    {
-        printf("Aborting bump!\n");
-        failed_run = EXIT_FAILED_RUN;
-        goto clean;
-    }
-
 
     printf("Destination path of backup: \n");
     scanf("%s", destination);
@@ -77,7 +70,7 @@ int main(void)
     scanf("%s", confirm);
     if (strcmp(confirm, "y") != 0)
     {
-        printf("Aborting bump!\n");
+        printf("Aborting dump!\n");
         failed_run = EXIT_FAILED_RUN;
         goto clean;
     }
