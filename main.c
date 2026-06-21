@@ -19,63 +19,48 @@ int main(void)
     char *fullpath = malloc(1000);
     char *cmd = malloc(2000);
 
+    int failed_run = 0;
+
     printf("==========\n");
     printf("DB Backups\n");
     printf("==========\n");
 
-    // DB name
-    printf("Enter db name:\n");
-    scanf("%s", db_name);
-    printf("Database name:\n\t%s\nIs this correct? (y/n)\n", db_name);
-    scanf("%s", confirm);
-    if (strcmp(confirm, "y") != 0)
+    int err = 0;
+    err = prompt_user(db_name, "Database name");
+    if (err)
     {
-        printf("Aborting dump!\n");
-        exit(1);
+        failed_run = EXIT_FAILED_RUN;
+        goto clean;
     }
-
-    // Host
-    printf("Enter host:\n");
-    scanf("%s", host);
-    printf("Database host:\n\t%s\nIs this correct? (y/n)\n", host);
-    scanf("%s", confirm);
-    if (strcmp(confirm, "y") != 0)
+    err = prompt_user(host, "Database host");
+    if (err)
     {
-        printf("Aborting dump!\n");
-        exit(1);
+        failed_run = EXIT_FAILED_RUN;
+        goto clean;
     }
-
-    // Port
-    printf("Enter port:\n");
-    scanf("%s", port);
-    printf("Database port:\n\t%s\nIs this correct? (y/n)\n", port);
-    scanf("%s", confirm);
-    if (strcmp(confirm, "y") != 0)
+    err = prompt_user(port, "Database port");
+    if (err)
     {
-        printf("Aborting dump!\n");
-        exit(1);
+        failed_run = EXIT_FAILED_RUN;
+        goto clean;
     }
-
-    // DB username
-    printf("Enter db username:\n");
-    scanf("%s", username);
-    printf("Database username:\n\t%s\nIs this correct? (y/n)\n", username);
-    scanf("%s", confirm);
-    if (strcmp(confirm, "y") != 0)
+    err = prompt_user(username, "Database username");
+    if (err)
     {
-        printf("Aborting dump!\n");
-        exit(1);
+        failed_run = EXIT_FAILED_RUN;
+        goto clean;
     }
-
-    // DB password
-    printf("Enter db password:\n");
-    scanf("%s", password);
-    printf("Database password:\n\t%s\nIs this correct? (y/n)\n", password);
-    scanf("%s", confirm);
+    err = prompt_user(password, "Database password");
+    if (err)
+    {
+        failed_run = EXIT_FAILED_RUN;
+        goto clean;
+    }
     if (strcmp(confirm, "y") != 0)
     {
         printf("Aborting bump!\n");
-        exit(1);
+        failed_run = EXIT_FAILED_RUN;
+        goto clean;
     }
 
 
@@ -93,7 +78,8 @@ int main(void)
     if (strcmp(confirm, "y") != 0)
     {
         printf("Aborting bump!\n");
-        exit(1);
+        failed_run = EXIT_FAILED_RUN;
+        goto clean;
     }
 
     // Start dump
@@ -130,10 +116,15 @@ int main(void)
 
     printf("Starting dump...\n");
 
-    int err = system(config.cmd);
-    if (err < 0)
+    int sys_err = system(config.cmd);
+    if (sys_err < 0)
+    {
         printf("Error running pg_dump!\n");
+        failed_run = EXIT_FAILED_RUN;
+    }
 
+
+clean:
     free(db_name);
     free(host);
     free(port);
@@ -144,5 +135,7 @@ int main(void)
     free(fullpath);
     free(cmd);
 
+    if (failed_run == EXIT_FAILED_RUN)
+        return EXIT_FAILED_RUN;
     return 0;
 }
