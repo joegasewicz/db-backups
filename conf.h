@@ -5,6 +5,9 @@
 #ifndef DB_BACKUPS_CONF_H
 #define DB_BACKUPS_CONF_H
 
+#define SUCCESSFUL_RUN 0
+#define EXIT_FAILED_RUN 1
+
 struct _Config
 {
     char *db_name;
@@ -19,5 +22,7 @@ struct _Config
 };
 
 typedef struct _Config Config;
+
+int prompt_user(char *input, const char *name);
 
 #endif //DB_BACKUPS_CONF_H
